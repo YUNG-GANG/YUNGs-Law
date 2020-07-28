@@ -33,7 +33,7 @@ public class BlockGenerator implements IWorldGenerator {
         int outerZEnd = innerZEnd + RADIUS;
 
         // 3-D array of values we set for each block.
-        // 0 = AIR, 1 = Block within range of AIR, 2 = block that should be processed
+        // 0 = AIR, 1 = Block within range of AIR, 2 = should be processed, -1 = should not be processed
         int[][][] values = new int[outerXEnd - outerXStart][64 + RADIUS][outerZEnd - outerZStart];
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -44,10 +44,9 @@ public class BlockGenerator implements IWorldGenerator {
                 for (int y = 0; y < 64 + RADIUS; y++) {
                     pos.setPos(outerXStart + x, y, outerZStart + z);
                     IBlockState state = world.getBlockState(pos);
-                    if (state == Blocks.AIR.getDefaultState() || state.getMaterial().isLiquid())
-                        values[x][y][z] = 0;
-                    else
-                        values[x][y][z] = 2;
+                    if (isAirOrLiquid(state)) values[x][y][z] = 0;
+                    else if (isUntouchable(state)) values[x][y][z] = -1;
+                    else values[x][y][z] = 2;
                 }
             }
         }
@@ -56,7 +55,8 @@ public class BlockGenerator implements IWorldGenerator {
         for (int x = outerXStart; x < outerXEnd; x++) {
             for (int z = outerZStart; z < outerZEnd; z++) {
                 for (int y = 0; y < 64 + RADIUS; y++) {
-                    if (values[x - outerXStart][y][z - outerZStart] == 0) { // if block is air
+                    // Mark blocks within RADIUS distance of AIR blocks as safe from processing (1)
+                    if (values[x - outerXStart][y][z - outerZStart] == 0) {
                         for (int offsetX = x - outerXStart - RADIUS; offsetX <= x - outerXStart + RADIUS; offsetX++) {
                             if (offsetX < RADIUS || offsetX > 15 + RADIUS) continue;
 
@@ -85,5 +85,13 @@ public class BlockGenerator implements IWorldGenerator {
                 }
             }
         }
+    }
+
+    private boolean isAirOrLiquid(IBlockState state) {
+        return state == Blocks.AIR.getDefaultState() || state.getMaterial().isLiquid();
+    }
+
+    private boolean isUntouchable(IBlockState state) {
+        return state == Blocks.BEDROCK.getDefaultState();
     }
 }
