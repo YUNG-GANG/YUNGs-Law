@@ -2,7 +2,6 @@ package com.yungnickyoung.minecraft.yungslaw;
 
 import com.yungnickyoung.minecraft.yungslaw.proxy.IProxy;
 import com.yungnickyoung.minecraft.yungslaw.world.BlockGenerator;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -22,13 +21,16 @@ public class YungsLaw {
     @SidedProxy(clientSide = "com.yungnickyoung.minecraft.yungslaw.proxy.ClientProxy", serverSide = "com.yungnickyoung.minecraft.yungslaw.proxy.ServerProxy")
     private static IProxy proxy;
 
+    public static BlockGenerator generator;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        GameRegistry.registerWorldGenerator(new BlockGenerator(), Integer.MAX_VALUE);
+        proxy.preInit();
+        generator = new BlockGenerator();
+        GameRegistry.registerWorldGenerator(generator, Integer.MAX_VALUE);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
 }
