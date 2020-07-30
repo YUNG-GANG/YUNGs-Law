@@ -1,7 +1,9 @@
 package com.yungnickyoung.minecraft.yungslaw.world;
 
 import com.yungnickyoung.minecraft.yungslaw.YungsLaw;
+import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
 import com.yungnickyoung.minecraft.yungslaw.config.Configuration;
+import com.yungnickyoung.minecraft.yungslaw.config.io.ConfigLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -16,29 +18,16 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class BlockGenerator implements IWorldGenerator {
-    private IBlockState hardBlock;
-    private int radius;
-    private int maxAltitude;
-    private boolean enableLiquidSafety;
-
-    public BlockGenerator() {
-        update();
-    }
-
-    /**
-     * Update stored values.
-     * Used when the config is reloaded.
-     */
-    public void update() {
-        this.hardBlock = getHardBlock();
-        this.radius = Configuration.genDistance;
-        this.maxAltitude = Configuration.maxAltitude;
-        this.enableLiquidSafety = Configuration.enableLiquidSafety;
-    }
-
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
         if (!(world instanceof WorldServer)) return;
         if (!isDimensionWhitelisted(world)) return;
+
+        // Get vars from config
+        ConfigHolder config = YungsLaw.configMap.computeIfAbsent(world.provider.getDimension(), ConfigLoader::loadConfigFromFileForDimension);
+        IBlockState hardBlock = getHardBlock(config.hardBlock.get());
+        int radius = config.genDistance.get();
+        int maxAltitude = config.maxAltitude.get();
+        boolean enableLiquidSafety = config.enableLiquidSafety.get();
 
         // Bounds for the 16x16 area we are actually generating on
         int innerXStart = chunkX * 16 + 8;
@@ -66,8 +55,8 @@ public class BlockGenerator implements IWorldGenerator {
                 for (int y = 0; y < maxAltitude + radius; y++) {
                     pos.setPos(outerXStart + x, y, outerZStart + z);
                     IBlockState state = world.getBlockState(pos);
-                    if (isSafe(state)) values[x][y][z] = 0;
-                    else if (isUntouchable(state)) values[x][y][z] = -1;
+                    if (isSafe(state, enableLiquidSafety, config.safeBlocks.get())) values[x][y][z] = 0;
+                    else if (isUntouchable(state, config.untouchableBlocks.get())) values[x][y][z] = -1;
                     else values[x][y][z] = 2;
                 }
             }
@@ -109,25 +98,25 @@ public class BlockGenerator implements IWorldGenerator {
         }
     }
 
-    private boolean isSafe(IBlockState state) {
-        for (String blockName : Configuration.safeBlocks) {
+    private boolean isSafe(IBlockState state, boolean enableLiquidSafety, String[] safeBlocks) {
+        for (String blockName : safeBlocks) {
             try {
                 Block block = Block.getBlockFromName(blockName);
                 if (block == state.getBlock()) return true;
             } catch (Exception e) {
-                YungsLaw.LOGGER.warn("Unable to find Safe Block {}: {}", blockName, e);
+                YungsLaw.LOGGER.error("ERROR: Unable to find Safe Block {}: {}", blockName, e);
             }
         }
         return enableLiquidSafety && state.getMaterial().isLiquid();
     }
 
-    private boolean isUntouchable(IBlockState state) {
-        for (String blockName : Configuration.untouchableBlocks) {
+    private boolean isUntouchable(IBlockState state, String[] untouchableBlocks) {
+        for (String blockName : untouchableBlocks) {
             try {
                 Block block = Block.getBlockFromName(blockName);
                 if (block == state.getBlock()) return true;
             } catch (Exception e) {
-                YungsLaw.LOGGER.warn("Unable to find Untouchable Block {}: {}", blockName, e);
+                YungsLaw.LOGGER.warn("ERROR: Unable to find Untouchable Block {}: {}", blockName, e);
             }
         }
         return false;
@@ -142,21 +131,19 @@ public class BlockGenerator implements IWorldGenerator {
      * Gets the namespaced Hard Block string from the config and returns its BlockState.
      * Defaults to obsidian if its BlockState cannot be found.
      */
-    private IBlockState getHardBlock() {
-        String hardBlockString = Configuration.hardBlock;
+    private IBlockState getHardBlock(String hardBlockString) {
         IBlockState hardBlock;
 
         try {
             hardBlock = Block.getBlockFromName(hardBlockString).getDefaultState();
-            YungsLaw.LOGGER.info("Using block {} as Hard Block ", hardBlockString);
         } catch (Exception e) {
-            YungsLaw.LOGGER.warn("Unable to use block {}: {}", hardBlockString, e);
-            YungsLaw.LOGGER.warn("Using obsidian instead...");
+            YungsLaw.LOGGER.error("ERROR: Unable to use block {}: {}", hardBlockString, e);
+            YungsLaw.LOGGER.error("Using obsidian instead...");
             hardBlock = Blocks.OBSIDIAN.getDefaultState();
         }
 
         if (hardBlock == null) {
-            YungsLaw.LOGGER.warn("Unable to use block {}: null block returned.", hardBlockString);
+            YungsLaw.LOGGER.error("ERROR: Unable to use block {}: null block returned.", hardBlockString);
             YungsLaw.LOGGER.warn("Using obsidian instead...");
             hardBlock = Blocks.OBSIDIAN.getDefaultState();
         }

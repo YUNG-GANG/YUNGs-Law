@@ -1,9 +1,8 @@
 package com.yungnickyoung.minecraft.yungslaw.config;
 
-import com.yungnickyoung.minecraft.yungslaw.YungsLaw;
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = YungsLaw.MODID, name="yungslaw-1_12_2")
+@Config(modid = YLSettings.MOD_ID, name=YLSettings.BASE_CONFIG_NAME)
 public class Configuration {
     @Config.Name("Generation Distance")
     @Config.Comment("Distance from Safe Blocks (e.g. air) from which your Hard Block will replace underground blocks.")
