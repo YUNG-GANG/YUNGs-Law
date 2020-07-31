@@ -43,4 +43,9 @@ public class Configuration {
     @Config.Comment("Automatically enables YUNG's Law in every possible dimension.")
     @Config.RequiresWorldRestart
     public static boolean enableGlobalWhitelist = false;
+
+    @Config.Name("Enable Ore Deletion Mode")
+    @Config.Comment("If enabled, only ore blocks will be replaced. The Hard Block will not be used - instead ores will be replaced with a nearby common block (e.g. stone, netherrack, etc)")
+    @Config.RequiresWorldRestart
+    public static boolean enableOreDeletion = false;
 }

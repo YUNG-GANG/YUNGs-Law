@@ -37,6 +37,9 @@ public class ConfigHolder {
         enableLiquidSafety = new ConfigOption<>("Mark Liquids As Safe", Configuration.enableLiquidSafety)
             .setCategory("general")
             .addToMap(properties);
+        enableOreDeletion = new ConfigOption<>("Enable Ore Deletion Mode", Configuration.enableOreDeletion)
+            .setCategory("general")
+            .addToMap(properties);
     }
 
     public ConfigOption<Integer>  genDistance;
@@ -45,6 +48,7 @@ public class ConfigHolder {
     public ConfigOption<String[]> untouchableBlocks;
     public ConfigOption<Integer>  maxAltitude;
     public ConfigOption<Boolean>  enableLiquidSafety;
+    public ConfigOption<Boolean>  enableOreDeletion;
 
     public static class ConfigOption<T> {
         public String name;

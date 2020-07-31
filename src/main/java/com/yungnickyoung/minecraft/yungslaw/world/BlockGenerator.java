@@ -5,6 +5,8 @@ import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
 import com.yungnickyoung.minecraft.yungslaw.config.Configuration;
 import com.yungnickyoung.minecraft.yungslaw.config.io.ConfigLoader;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +26,7 @@ public class BlockGenerator implements IWorldGenerator {
 
         // Get vars from config
         ConfigHolder config = YungsLaw.configMap.computeIfAbsent(world.provider.getDimension(), ConfigLoader::loadConfigFromFileForDimension);
+        boolean enableOreDeletion = config.enableOreDeletion.get();
         IBlockState hardBlock = getHardBlock(config.hardBlock.get());
         int radius = config.genDistance.get();
         int maxAltitude = config.maxAltitude.get();
@@ -44,7 +47,7 @@ public class BlockGenerator implements IWorldGenerator {
         int outerZEnd = innerZEnd + radius;
 
         // 3-D array of values we set for each block.
-        // 0 = AIR, 1 = Block within range of AIR, 2 = should be processed, -1 = should not be processed
+        // 0 = AIR, 1 = Block within range of AIR, 2 = should be processed, -1 = should not be processed, 3 = ore (for ore delete mode)
         int[][][] values = new int[outerXEnd - outerXStart][maxAltitude + radius][outerZEnd - outerZStart];
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -57,6 +60,7 @@ public class BlockGenerator implements IWorldGenerator {
                     IBlockState state = world.getBlockState(pos);
                     if (isSafe(state, enableLiquidSafety, config.safeBlocks.get())) values[x][y][z] = 0;
                     else if (isUntouchable(state, config.untouchableBlocks.get())) values[x][y][z] = -1;
+                    else if (isOre(state, enableOreDeletion)) values[x][y][z] = 3;
                     else values[x][y][z] = 2;
                 }
             }
@@ -89,8 +93,14 @@ public class BlockGenerator implements IWorldGenerator {
         for (int x = radius; x < 16 + radius; x++) {
             for (int z = radius; z < 16 + radius; z++) {
                 for (int y = 0; y < maxAltitude; y++) {
-                    if (values[x][y][z] == 2) {
-                        pos.setPos(x + outerXStart, y, z + outerZStart);
+                    pos.setPos(x + outerXStart, y, z + outerZStart);
+                    // Ore deletion mode
+                    if (enableOreDeletion && values[x][y][z] == 3) {
+                        // Replace with biome filler block
+                        world.setBlockState(pos, Blocks.GOLD_BLOCK.getDefaultState());
+                    }
+                    // Replacement mode (default)
+                    else if (!enableOreDeletion && values[x][y][z] == 2) {
                         world.setBlockState(pos, hardBlock);
                     }
                 }
@@ -120,6 +130,13 @@ public class BlockGenerator implements IWorldGenerator {
             }
         }
         return false;
+    }
+
+    private boolean isOre(IBlockState state, boolean enableOreDeletion) {
+        return enableOreDeletion && (
+            state.getBlock() instanceof BlockOre
+            || state.getBlock() instanceof BlockRedstoneOre
+        );
     }
 
     private boolean isDimensionWhitelisted(World world) {
