@@ -97,7 +97,7 @@ public class BlockGenerator implements IWorldGenerator {
                     // Ore deletion mode
                     if (enableOreDeletion && values[x][y][z] == 3) {
                         // Replace with biome filler block
-                        world.setBlockState(pos, Blocks.GOLD_BLOCK.getDefaultState());
+                        world.setBlockState(pos, world.getBiome(pos).fillerBlock);
                     }
                     // Replacement mode (default)
                     else if (!enableOreDeletion && values[x][y][z] == 2) {
