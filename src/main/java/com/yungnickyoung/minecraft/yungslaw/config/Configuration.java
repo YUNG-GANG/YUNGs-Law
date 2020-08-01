@@ -48,4 +48,8 @@ public class Configuration {
     @Config.Comment("If enabled, only ore blocks will be replaced. The Hard Block will not be used - instead ores will be replaced with a nearby common block (e.g. stone, netherrack, etc)")
     @Config.RequiresWorldRestart
     public static boolean enableOreDeletion = false;
+
+    @Config.Name("Mod Compatibility")
+    @Config.RequiresWorldRestart
+    public static ModCompatConfig modCompat = new ModCompatConfig();
 }

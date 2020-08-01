@@ -4,6 +4,7 @@ import com.yungnickyoung.minecraft.yungslaw.YungsLaw;
 import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
 import com.yungnickyoung.minecraft.yungslaw.config.Configuration;
 import com.yungnickyoung.minecraft.yungslaw.config.io.ConfigLoader;
+import com.yungnickyoung.minecraft.yungslaw.integration.Integrations;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
@@ -25,26 +26,26 @@ public class BlockGenerator implements IWorldGenerator {
         if (!isDimensionWhitelisted(world)) return;
 
         // Get vars from config
-        ConfigHolder config = YungsLaw.configMap.computeIfAbsent(world.provider.getDimension(), ConfigLoader::loadConfigFromFileForDimension);
-        boolean enableOreDeletion = config.enableOreDeletion.get();
-        IBlockState hardBlock = getHardBlock(config.hardBlock.get());
-        int radius = config.genDistance.get();
-        int maxAltitude = config.maxAltitude.get();
-        boolean enableLiquidSafety = config.enableLiquidSafety.get();
+        final ConfigHolder config = YungsLaw.configMap.computeIfAbsent(world.provider.getDimension(), ConfigLoader::loadConfigFromFileForDimension);
+        final boolean enableOreDeletion = config.enableOreDeletion.get();
+        final IBlockState hardBlock = getHardBlock(config.hardBlock.get());
+        final int radius = config.genDistance.get();
+        final int maxAltitude = config.maxAltitude.get();
+        final boolean enableLiquidSafety = config.enableLiquidSafety.get();
 
         // Bounds for the 16x16 area we are actually generating on
-        int innerXStart = chunkX * 16 + 8;
-        int innerZStart = chunkZ * 16 + 8;
-        int innerXEnd = innerXStart + 16;
-        int innerZEnd = innerZStart + 16;
+        final int innerXStart = chunkX * 16 + 8;
+        final int innerZStart = chunkZ * 16 + 8;
+        final int innerXEnd = innerXStart + 16;
+        final int innerZEnd = innerZStart + 16;
 
         // Bounds for the outer area.
         // Pads the inner 16x16 area by <radius> blocks in each direction in order to find any Safe Blocks
         // outside the inner area that may impact blocks within the inner area
-        int outerXStart = innerXStart - radius;
-        int outerZStart = innerZStart - radius;
-        int outerXEnd = innerXEnd + radius;
-        int outerZEnd = innerZEnd + radius;
+        final int outerXStart = innerXStart - radius;
+        final int outerZStart = innerZStart - radius;
+        final int outerXEnd = innerXEnd + radius;
+        final int outerZEnd = innerZEnd + radius;
 
         // 3-D array of values we set for each block.
         // 0 = AIR, 1 = Block within range of AIR, 2 = should be processed, -1 = should not be processed, 3 = ore (for ore delete mode)
@@ -136,6 +137,7 @@ public class BlockGenerator implements IWorldGenerator {
         return enableOreDeletion && (
             state.getBlock() instanceof BlockOre
             || state.getBlock() instanceof BlockRedstoneOre
+            || Integrations.ORES.contains(state)
         );
     }
 

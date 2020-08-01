@@ -20,8 +20,17 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+repositories {
+    maven {
+        url = "https://www.cursemaven.com"
+    }
+    maven {
+        url "https://minecraft.curseforge.com/api/maven/"
+    }
+}
+
 minecraft {
-    version = "1.12.2-14.23.5.2768"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
 
     // Fill in properties in source files
@@ -41,6 +50,9 @@ dependencies {
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
     //compile "some.group:artifact:version"
+
+    provided 'curse.maven:quark:2924091'
+    provided 'curse.maven:appliedenergistics2:2747063'
 
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env

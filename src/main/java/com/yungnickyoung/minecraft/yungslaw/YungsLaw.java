@@ -2,6 +2,7 @@ package com.yungnickyoung.minecraft.yungslaw;
 
 import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
 import com.yungnickyoung.minecraft.yungslaw.config.YLSettings;
+import com.yungnickyoung.minecraft.yungslaw.init.ModCompat;
 import com.yungnickyoung.minecraft.yungslaw.init.ModConfig;
 import com.yungnickyoung.minecraft.yungslaw.init.ModWorld;
 import com.yungnickyoung.minecraft.yungslaw.proxy.IProxy;
@@ -53,5 +54,6 @@ public class YungsLaw {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+        ModCompat.postInit();
     }
 }
