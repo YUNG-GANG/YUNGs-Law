@@ -12,6 +12,7 @@ public class EventConfig {
     @SubscribeEvent
     public void onConfigReload(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.getModID().equals(YLSettings.MOD_ID)) {
+            YungsLaw.LOGGER.info("Baking config changes...");
             ConfigManager.sync(YLSettings.MOD_ID, Config.Type.INSTANCE);
             Integrations.update();
             YungsLaw.configMap.clear();

@@ -1,11 +1,8 @@
 package com.yungnickyoung.minecraft.yungslaw;
 
-import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
+import com.yungnickyoung.minecraft.yungslaw.config.util.ConfigHolder;
 import com.yungnickyoung.minecraft.yungslaw.config.YLSettings;
-import com.yungnickyoung.minecraft.yungslaw.init.ModCompat;
-import com.yungnickyoung.minecraft.yungslaw.init.ModConfig;
-import com.yungnickyoung.minecraft.yungslaw.init.ModWorld;
-import com.yungnickyoung.minecraft.yungslaw.proxy.IProxy;
+import com.yungnickyoung.minecraft.yungslaw.proxy.Proxy;
 import com.yungnickyoung.minecraft.yungslaw.world.BlockGenerator;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -25,7 +22,7 @@ public class YungsLaw {
     public static final Logger LOGGER = LogManager.getLogger(YLSettings.MOD_ID);
 
     @SidedProxy(clientSide = YLSettings.CLIENT_PROXY, serverSide = YLSettings.SERVER_PROXY)
-    private static IProxy proxy;
+    private static Proxy proxy;
 
     /**
      * File referring to the overarching directory for custom dimension configs
@@ -42,8 +39,6 @@ public class YungsLaw {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit();
-        ModWorld.preInit();
-        ModConfig.preinit();
     }
 
     @EventHandler
@@ -54,6 +49,5 @@ public class YungsLaw {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
-        ModCompat.postInit();
     }
 }

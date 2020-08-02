@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.yungslaw.integration.modules;
 
+import com.yungnickyoung.minecraft.yungslaw.YungsLaw;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.Loader;
 
@@ -60,5 +61,13 @@ public abstract class CompatModule {
 
     protected <T> void addIfAbsent(List<T> list, Collection<T> items) {
         items.forEach(item -> addIfAbsent(list, item));
+    }
+
+    protected <T> void addIfAbsentAndAble(List<T> list, T item) {
+        try {
+            addIfAbsent(list, item);
+        } catch (Exception e) {
+            YungsLaw.LOGGER.error("Unable to add item {} for mod {}: {}", item.toString(), this.MOD_ID, e);
+        }
     }
 }

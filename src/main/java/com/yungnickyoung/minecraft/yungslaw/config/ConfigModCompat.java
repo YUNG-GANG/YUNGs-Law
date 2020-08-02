@@ -2,7 +2,7 @@ package com.yungnickyoung.minecraft.yungslaw.config;
 
 import net.minecraftforge.common.config.Config;
 
-public class ModCompatConfig {
+public class ConfigModCompat {
     @Config.Name("Quark")
     @Config.Comment("If enabled, Quark ores will be deleted when using Ore Deletion Mode.")
     @Config.RequiresWorldRestart

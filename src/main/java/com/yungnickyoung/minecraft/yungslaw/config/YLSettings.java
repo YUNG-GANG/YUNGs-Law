@@ -19,7 +19,7 @@ public class YLSettings {
     public static final String SERVER_PROXY = "com.yungnickyoung.minecraft.yungslaw.proxy.ServerProxy";
     public static final String CLIENT_PROXY = "com.yungnickyoung.minecraft.yungslaw.proxy.ClientProxy";
 
-    public static final String CUSTOM_CONFIG_PATH = "yungslaw";
-    public static final String BASE_CONFIG_NAME = "yungslaw-1_12_2";
+    public static final String CUSTOM_CONFIG_PATH = "YungsLaw";
+    public static final String BASE_CONFIG_NAME = "YungsLaw-1_12_2";
     public static final String VERSION_PATH = "1_12_2";
 }

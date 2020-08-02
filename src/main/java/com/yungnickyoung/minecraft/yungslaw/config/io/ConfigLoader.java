@@ -2,7 +2,8 @@ package com.yungnickyoung.minecraft.yungslaw.config.io;
 
 
 import com.yungnickyoung.minecraft.yungslaw.YungsLaw;
-import com.yungnickyoung.minecraft.yungslaw.config.ConfigHolder;
+import com.yungnickyoung.minecraft.yungslaw.config.util.ConfigHolder;
+import com.yungnickyoung.minecraft.yungslaw.config.util.ConfigOption;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -150,8 +151,8 @@ public class ConfigLoader {
                                 }
 
                                 Property prop = new Property(name, line.substring(i + 1), type, true);
-                                String fullName = currCategory.getQualifiedName() + "." + name;
-                                ConfigHolder.ConfigOption target = config.properties.get(fullName);
+                                String fullName = currCategory.getQualifiedName().toLowerCase() + "." + name.toLowerCase();
+                                ConfigOption target = config.properties.get(fullName);
 
                                 if (target != null) {
                                     switch(type) {
@@ -229,7 +230,7 @@ public class ConfigLoader {
                                     prop = new Property(name, tmpList.toArray(new String[0]), type);
                                     currCategory.put(name, prop);
 
-                                    fullName = currCategory.getQualifiedName() + "." + name;
+                                    fullName = currCategory.getQualifiedName().toLowerCase() + "." + name.toLowerCase();
                                     target = config.properties.get(fullName);
                                     if (target != null) {
                                         target.set(prop.getStringList());
