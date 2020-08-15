@@ -14,10 +14,10 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class BlockGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
@@ -31,9 +31,9 @@ public class BlockGenerator implements IWorldGenerator {
         final int               maxAltitude          = config.maxAltitude.get();
         final boolean           enableLiquidSafety   = config.enableLiquidSafety.get();
         final IBlockState       hardBlock            = getHardBlockFromString(config.hardBlock.get());
-        final List<IBlockState> whitelistedOreBlocks = getBlockListFromNames(config.oreWhitelist.get());
-        final List<IBlockState> safeBlocks           = getBlockListFromNames(config.safeBlocks.get());
-        final List<IBlockState> untouchableBlocks    = getBlockListFromNames(config.safeBlocks.get());
+        final Set<IBlockState> whitelistedOreBlocks  = getBlockSetFromNames(config.oreWhitelist.get());
+        final Set<IBlockState> safeBlocks            = getBlockSetFromNames(config.safeBlocks.get());
+        final Set<IBlockState> untouchableBlocks     = getBlockSetFromNames(config.safeBlocks.get());
 
         // Bounds for the 16x16 area we are actually generating on
         final int innerXStart = chunkX * 16 + 8;
@@ -116,8 +116,8 @@ public class BlockGenerator implements IWorldGenerator {
             Arrays.stream(Configuration.whitelistedDimensionIDs).anyMatch(id -> id == world.provider.getDimension());
     }
 
-    private List<IBlockState> getBlockListFromNames(String[] blockNames) {
-        List<IBlockState> blockStateList = new ArrayList<>();
+    private Set<IBlockState> getBlockSetFromNames(String[] blockNames) {
+        Set<IBlockState> blockStateList = new HashSet<>();
 
         for (String blockName : blockNames) {
             try {
