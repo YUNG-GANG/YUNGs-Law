@@ -31,9 +31,9 @@ public class BlockGenerator implements IWorldGenerator {
         final int               maxAltitude          = config.maxAltitude.get();
         final boolean           enableLiquidSafety   = config.enableLiquidSafety.get();
         final IBlockState       hardBlock            = getHardBlockFromString(config.hardBlock.get());
-        final Set<IBlockState>  whitelistedOreBlocks  = getBlockSetFromNames(config.oreWhitelist.get());
-        final Set<IBlockState>  safeBlocks            = getBlockSetFromNames(config.safeBlocks.get());
-        final Set<IBlockState>  untouchableBlocks     = getBlockSetFromNames(config.untouchableBlocks.get());
+        final Set<IBlockState>  whitelistedOreBlocks = getBlockSetFromNames(config.oreWhitelist.get());
+        final Set<IBlockState>  safeBlocks           = getBlockSetFromNames(config.safeBlocks.get());
+        final Set<IBlockState>  untouchableBlocks    = getBlockSetFromNames(config.untouchableBlocks.get());
 
         // Bounds for the 16x16 area we are actually generating on
         final int innerXStart = chunkX * 16 + 8;
