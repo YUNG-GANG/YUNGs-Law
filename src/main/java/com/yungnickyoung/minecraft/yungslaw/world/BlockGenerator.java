@@ -33,7 +33,7 @@ public class BlockGenerator implements IWorldGenerator {
         final IBlockState       hardBlock            = getHardBlockFromString(config.hardBlock.get());
         final List<IBlockState> whitelistedOreBlocks = getBlockListFromNames(config.oreWhitelist.get());
         final List<IBlockState> safeBlocks           = getBlockListFromNames(config.safeBlocks.get());
-        final List<IBlockState> untouchableBlocks    = getBlockListFromNames(config.safeBlocks.get());
+        final List<IBlockState> untouchableBlocks    = getBlockListFromNames(config.untouchableBlocks.get());
 
         // Bounds for the 16x16 area we are actually generating on
         final int innerXStart = chunkX * 16 + 8;
@@ -121,8 +121,15 @@ public class BlockGenerator implements IWorldGenerator {
 
         for (String blockName : blockNames) {
             try {
-                Block block = Block.getBlockFromName(blockName);
-                if (block != null) blockStateList.add(block.getDefaultState());
+                if (blockName.indexOf('@') > -1) {
+                    String[] nameSplit = blockName.split("@", 2);
+                    Block block = Block.getBlockFromName(nameSplit[0]);
+                    if (block != null) blockStateList.add(block.getStateFromMeta(Integer.parseInt(nameSplit[1])));
+                }
+                else {
+                    Block block = Block.getBlockFromName(blockName);
+                    if (block != null) blockStateList.add(block.getDefaultState());
+                }
             } catch (Exception e) {
                 YungsLaw.LOGGER.error("ERROR: Unable to find block {}: {}", blockName, e);
             }
