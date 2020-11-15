@@ -18,8 +18,9 @@ public class QuarkModule extends CompatModule {
         try {
             IBlockState biotite = Objects.requireNonNull(Biotite.biotite_ore.getDefaultState());
             this.addIfAbsentAndAble(this.ores, biotite);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             YungsLaw.LOGGER.error("Unable to register Quark Biotite for YUNG's Law! Is the Quark Biotite module enabled?");
+            YungsLaw.LOGGER.error(e.toString());
         }
     }
 
